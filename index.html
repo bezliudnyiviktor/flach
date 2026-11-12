@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f4ef">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Карточки">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Флеш-карточки — мои слова</title>
+  <style>
+    :root {color-scheme:light; --bg:#f5f4ef; --surface:#fff; --text:#1a2928; --muted:#63716f; --border:#dde4dc; --accent:#147a63; --accent-dark:#096650; --accent-light:#e1f5ee; --warn:#a56418; --shadow:0 12px 35px rgba(21,51,44,.065);}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);line-height:1.5}
+    button,input,select,textarea{font:inherit} button{cursor:pointer} button:disabled{opacity:.4;cursor:not-allowed} button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #80cfb3;outline-offset:2px}
+    .shell{width:min(1060px,100%);padding:24px 18px 70px;margin:auto}
+    header{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;margin-bottom:22px}
+    .eyebrow{color:var(--accent);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em} h1{margin:4px 0 4px;letter-spacing:-.05em;font-size:clamp(30px,5vw,44px);line-height:1.12} .subtitle{margin:0;color:var(--muted);font-size:14px}
+    .header-actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+    .btn{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:12px;min-height:44px;padding:9px 14px;font-weight:700;display:inline-flex;gap:8px;align-items:center;justify-content:center;text-align:center}
+    .btn:hover:not(:disabled){border-color:#90c9b1;background:#f8fcfa}.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn-primary:hover:not(:disabled){background:var(--accent-dark);color:#fff}.btn-soft{color:var(--accent-dark);border-color:#c3e6d7;background:var(--accent-light)} .btn-danger{color:#9b3438}
+    .panel{border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow);border-radius:20px;padding:20px}
+    .gridstats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 16px}
+    .stat{border:1px solid var(--border);background:#fff;border-radius:15px;padding:14px 16px}.stat small{color:var(--muted);font-size:12px;display:block}.stat strong{font-size:25px;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+    .progress-track{height:7px;background:#eaf0e9;overflow:hidden;border-radius:20px;margin-top:12px}.progress-fill{height:100%;width:0;background:var(--accent);transition:width .25s}
+    .controlbar{display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:14px;margin-bottom:16px}
+    .controlgroup{display:flex;flex-wrap:wrap;gap:10px;align-items:end}.field{display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:12px;font-weight:700}.field select,.field input,.field textarea{color:var(--text);min-height:42px;padding:8px 11px;border:1px solid var(--border);background:#fff;border-radius:10px;min-width:120px}
+    .file-name{font-size:12px;color:var(--muted);word-break:break-word;margin:9px 0 0}.file-name span{font-weight:700;color:var(--text)}
+    main{display:grid;grid-template-columns:minmax(0,1.28fr) minmax(280px,.72fr);gap:16px;align-items:start}
+    .study-head{display:flex;gap:12px;align-items:center;justify-content:space-between}.study-head h2,.list-head h2{font-size:17px;margin:0}.study-head span{font-size:12px;color:var(--muted);font-weight:700}
+    .card-face{margin:16px 0;border-radius:21px;border:2px solid #bcd9c9;background:linear-gradient(160deg,#f5fff8,#f7fbfa 58%,#e8f3f0);min-height:290px;padding:28px 22px;width:100%;color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;box-shadow:inset 0 1px 0 #fff;overflow-wrap:anywhere}
+    .card-face:hover{border-color:#82b9a2}.side-label{color:var(--accent);font-weight:800;font-size:11px;letter-spacing:.16em;text-transform:uppercase}.term{font-weight:800;letter-spacing:-.035em;text-align:center;font-size:clamp(27px,4vw,43px);line-height:1.18;white-space:pre-wrap}.helper{color:var(--muted);font-size:13px;text-align:center}.card-face.revealed{background:linear-gradient(160deg,#f4f5ff,#f9fcff);border-color:#c5cde8}
+    .card-face.revealed .side-label{color:#5468ad}.nav-row{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:9px}.actions-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}.actions-row .btn{flex:1}.microtext{margin:10px 0 0;color:var(--muted);font-size:12px}
+    .list-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.list-head span{font-size:12px;color:var(--muted)}.word-list{display:flex;flex-direction:column;gap:7px;max-height:500px;overflow:auto;padding-right:3px}
+    .word-item{display:flex;gap:6px;align-items:center;border:1px solid var(--border);border-radius:12px;padding:9px 10px;background:#fff}.word-item.active{border-color:var(--accent);background:#f0faf5}.word-main{min-width:0;flex:1;text-align:left;border:0;background:transparent;color:inherit;padding:0}.word-main strong{display:block;font-size:14px;overflow-wrap:anywhere}.word-main small{display:block;color:var(--muted);font-size:11px;overflow-wrap:anywhere}.word-num{display:inline-block;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums;margin-right:7px}.check{min-width:34px;min-height:34px;border-radius:9px;border:1px solid var(--border);background:white;color:var(--muted);font-weight:800}.check.done{background:var(--accent-light);border-color:#b5e3d0;color:var(--accent)}.edit-small{min-width:34px;min-height:34px;border:0;border-radius:9px;background:#f0f3ef;color:var(--muted)}
+    .under-panel{margin-top:16px}.under-panel h2{font-size:17px;margin:0 0 10px}.hint{font-size:13px;color:var(--muted);margin:7px 0}.examples{font-size:13px;background:#f4f6f2;border:1px solid #e5e9e2;border-radius:12px;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}
+    .status{font-size:13px;color:var(--accent-dark);min-height:20px;margin:10px 0 0}.empty{text-align:center;padding:35px 18px;color:var(--muted)}.empty strong{display:block;color:var(--text);font-size:18px;margin-bottom:6px}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(13,32,28,.48);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}.modal-backdrop[hidden]{display:none}.modal{background:#fff;width:min(460px,100%);padding:23px;border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.25)}.modal h2{margin:0 0 16px;font-size:21px}.modal .field{font-size:13px;margin-bottom:12px}.modal .field input,.modal .field textarea{width:100%;font-weight:400;font-size:16px}.modal .field textarea{min-height:75px;resize:vertical}.modal .buttons{display:flex;flex-wrap:wrap;gap:9px;justify-content:flex-end;margin-top:18px}.checklabel{display:flex;gap:9px;align-items:center;font-size:14px}.checklabel input{width:18px;height:18px;accent-color:var(--accent)}
+    @media(max-width:760px){.shell{padding:19px 12px 48px}.panel{padding:15px}.gridstats{gap:7px}.stat{padding:11px 10px}.stat strong{font-size:23px}.stat small{font-size:11px}main{grid-template-columns:1fr}.card-face{min-height:260px}.header-actions{width:100%}.header-actions .btn{flex:1}.study-head h2{font-size:16px}.controlgroup{width:100%}.field{flex:1}.field select{min-width:0;width:100%}.nav-row .btn{padding:9px 6px;font-size:13px}}
+    @media(prefers-reduced-motion:reduce){.progress-fill{transition:none}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div><div class="eyebrow">Учить слова • офлайн</div><h1>Мои флеш-карточки</h1><p class="subtitle">Загружайте TXT, повторяйте, отмечайте выученное и сохраняйте результат.</p></div>
+    <div class="header-actions">
+      <button class="btn" id="addBtn" type="button">＋ Добавить</button>
+      <button class="btn btn-primary" id="loadBtn" type="button">↑ Загрузить TXT</button>
+      <button class="btn btn-soft" id="saveBtn" type="button">↓ Сохранить TXT</button>
+      <input id="fileInput" type="file" accept=".txt,text/plain" hidden aria-label="Выбрать текстовый файл">
+    </div>
+  </header>
+  <section class="gridstats" aria-label="Статистика изучения">
+    <div class="stat"><small>Всего слов</small><strong id="totalCount">0</strong></div>
+    <div class="stat"><small>Выучил</small><strong id="learnedCount">0</strong></div>
+    <div class="stat"><small>Осталось</small><strong id="leftCount">0</strong></div>
+    <div class="stat"><small>Прогресс</small><strong id="percentCount">0%</strong><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div></div>
+  </section>
+  <section class="panel" style="margin-bottom:16px">
+    <div class="controlbar">
+      <div class="controlgroup">
+        <label class="field">Карточек в подборке<select id="batchSelect"><option value="10">10 слов</option><option value="15">15 слов</option><option value="20">20 слов</option></select></label>
+        <label class="field">Показывать<select id="filterSelect"><option value="unlearned">Не выученные</option><option value="all">Все слова</option><option value="learned">Выученные</option></select></label>
+        <label class="field">Направление<select id="directionSelect"><option value="normal">Слово → перевод</option><option value="reverse">Перевод → слово</option></select></label>
+      </div>
+      <div class="controlgroup"><button class="btn" id="shuffleBtn" type="button">⇄ Перемешать</button><button class="btn" id="newBatchBtn" type="button">Следующие слова →</button></div>
+    </div>
+    <div class="controlbar" style="margin-bottom:0;align-items:center">
+      <label class="field" style="flex:1;max-width:305px">Как читать загружаемый TXT<select id="importMode"><option value="lines">Одна строка = одна карточка</option><option value="words">Извлечь слова из сплошного текста</option></select></label>
+      <p class="file-name">Файл: <span id="filenameLabel">Пример (встроенные слова)</span><span id="dirtyLabel"></span></p>
+    </div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </section>
+  <main>
+    <section class="panel" aria-label="Тренировка">
+      <div class="study-head"><h2>Карточка</h2><span id="positionLabel">—</span></div>
+      <button type="button" class="card-face" id="cardFace" aria-label="Перевернуть карточку"><span class="side-label" id="faceLabel">СЛОВО</span><span class="term" id="faceText">Загрузите слова</span><span class="helper" id="faceHelp">Нажмите, чтобы увидеть перевод</span></button>
+      <div class="nav-row"><button class="btn" id="prevBtn" type="button">← Назад</button><button class="btn btn-primary" id="flipBtn" type="button">Показать ответ</button><button class="btn" id="nextBtn" type="button">Далее →</button></div>
+      <div class="actions-row"><button class="btn btn-soft" id="learnBtn" type="button">✓ Выучил</button><button class="btn" id="editBtn" type="button">✎ Редактировать</button></div>
+      <p class="microtext">Клавиатура: ← → — карточки, пробел — перевернуть.</p>
+    </section>
+    <section class="panel" aria-label="Список текущей подборки">
+      <div class="list-head"><h2>Слова в подборке</h2><span id="batchLabel">—</span></div>
+      <div class="word-list" id="wordList"></div>
+    </section>
+  </main>
+  <section class="panel under-panel">
+    <h2>Как подготовить TXT</h2>
+    <p class="hint">Напишите каждую пару на новой строке: <strong>слово | перевод</strong>. Можно также использовать тире или знак табуляции. Перевод необязателен — его можно добавить через «Редактировать». Для обычного текста выберите «Извлечь слова из сплошного текста».</p>
+    <div class="examples">der Widerstand | сопротивление<br>die Spannung | напряжение<br>überprüfen | проверять</div>
+    <p class="hint">При сохранении третье поле показывает статус: <strong>1 = выучил</strong>, <strong>0 = ещё учу</strong>. Такой TXT можно загрузить снова — отметки сохранятся. Изменения автоматически сохраняются в этом браузере; экспортируйте TXT, чтобы иметь резервную копию или перенести слова на другое устройство.</p>
+  </section>
+</div>
+<div class="modal-backdrop" id="modalBackdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">Редактировать карточку</h2>
+    <form id="cardForm">
+      <label class="field">Слово или фраза<input id="termInput" maxlength="600" required></label>
+      <label class="field">Перевод (можно оставить пустым)<textarea id="translationInput" maxlength="1200"></textarea></label>
+      <label class="checklabel"><input id="learnedInput" type="checkbox"> Я выучил это слово</label>
+      <div class="buttons"><button type="button" class="btn btn-danger" id="deleteBtn">Удалить</button><button type="button" class="btn" id="cancelBtn">Отмена</button><button type="submit" class="btn btn-primary">Сохранить</button></div>
+    </form>
+  </div>
+</div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const SAMPLE=[['zuverlässig','надёжный'],['die Entscheidung','решение'],['die Verantwortung','ответственность'],['ermöglichen','делать возможным'],['vermeiden','избегать'],['der Anschluss','подключение'],['die Schaltung','электрическая схема'],['der Widerstand','сопротивление'],['die Spannung','напряжение'],['die Stromstärke','сила тока'],['der Kondensator','конденсатор'],['überprüfen','проверять']];
+const KEY='flashcards-ru-2026-v1';
+let state={cards:SAMPLE.map((p,i)=>({id:'sample-'+i,term:p[0],translation:p[1],learned:false})),fileName:'Пример (встроенные слова)',dirty:false};
+try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved&&Array.isArray(saved.cards)){state={cards:saved.cards.filter(isValidCard).map(c=>({id:String(c.id),term:String(c.term),translation:String(c.translation||''),learned:!!c.learned})),fileName:String(saved.fileName||'Мои слова.txt'),dirty:!!saved.dirty};}}catch(e){}
+let filter='unlearned',batchSize=10,direction='normal',queue=[],cursor=0,batch=[],index=0,flipped=false,editingId=null;
+let shuffled=false;
+function isValidCard(c){return c&&typeof c.term==='string'&&c.term.trim()&&typeof c.id!=='undefined'}
+function makeId(){return 'c-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10)}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){setStatus('Автосохранение в браузере недоступно. Сохраните TXT вручную.')}}
+function setStatus(msg){$('status').textContent=msg}
+function markDirty(){state.dirty=true;persist()}
+function pool(){return state.cards.filter(c=>filter==='all'||(filter==='learned'?c.learned:!c.learned)).map(c=>c.id)}
+function resetStudy(message=''){queue=pool();if(shuffled){for(let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]]}}cursor=0;batch=[];index=0;flipped=false;loadNextBatch();if(message)setStatus(message)}
+function loadNextBatch(){const result=[];while(cursor<queue.length&&result.length<batchSize){let id=queue[cursor++];let c=getCard(id);if(c&&(filter==='all'||(filter==='learned'?c.learned:!c.learned)))result.push(id)}batch=result;index=0;flipped=false;render()}
+function getCard(id){return state.cards.find(c=>c.id===id)}
+function currentCard(){return getCard(batch[index])}
+function nextPack(){if(cursor>=queue.length){resetStudy('Подборки пройдены. Начинаем повторение подходящих слов заново.')}else{loadNextBatch();setStatus('Открыта следующая подборка.')}}
+function changeCard(step){if(!batch.length)return;index=Math.max(0,Math.min(batch.length-1,index+step));flipped=false;render()}
+function render(){
+  const total=state.cards.length,learned=state.cards.filter(c=>c.learned).length;
+  $('totalCount').textContent=total;$('learnedCount').textContent=learned;$('leftCount').textContent=total-learned;
+  $('percentCount').textContent=(total?Math.round(learned/total*100):0)+'%';$('progressFill').style.width=(total?learned/total*100:0)+'%';
+  $('filenameLabel').textContent=state.fileName;$('dirtyLabel').textContent=state.dirty?' • есть несохранённые изменения':'';
+  const c=currentCard(),has=!!c;
+  $('cardFace').disabled=!has;$('flipBtn').disabled=!has;$('prevBtn').disabled=!has||index===0;$('nextBtn').disabled=!has||index===batch.length-1;
+  $('learnBtn').disabled=!has;$('editBtn').disabled=!has;$('newBatchBtn').disabled=!state.cards.length;
+  $('positionLabel').textContent=has?('Слово '+(index+1)+' из '+batch.length):'Нет карточек';
+  $('batchLabel').textContent=batch.length+' слов';
+  $('cardFace').classList.toggle('revealed',flipped);
+  if(has){let source=direction==='normal'?c.term:c.translation||'(перевод не указан)';let answer=direction==='normal'?c.translation||'(перевод не указан)':c.term;
+    $('faceLabel').textContent=flipped?'ОТВЕТ':'ВОПРОС';$('faceText').textContent=flipped?answer:source;
+    $('faceHelp').textContent=flipped?'Нажмите, чтобы вернуться к вопросу':'Нажмите, чтобы увидеть ответ';
+    $('flipBtn').textContent=flipped?'Скрыть ответ':'Показать ответ';$('learnBtn').textContent=c.learned?'↶ Ещё учу':'✓ Выучил';
+    $('learnBtn').classList.toggle('btn-soft',!c.learned);
+  }else{$('faceLabel').textContent='ПОДБОРКА';$('faceText').textContent=total===0?'Добавьте или загрузите TXT':filter==='unlearned'&&learned===total?'Все слова выучены!':'В этой подборке нет слов';$('faceHelp').textContent='Можно изменить фильтр, загрузить файл или добавить слово.';$('flipBtn').textContent='Показать ответ';}
+  const list=$('wordList');list.replaceChildren();
+  if(!batch.length){const e=document.createElement('div');e.className='empty';e.textContent='Выберите другой фильтр или загрузите слова.';list.appendChild(e)}
+  for(let i=0;i<batch.length;i++){
+    const word=getCard(batch[i]);if(!word)continue;
+    const row=document.createElement('div');row.className='word-item'+(i===index?' active':'');
+    const main=document.createElement('button');main.type='button';main.className='word-main';const strong=document.createElement('strong');const num=document.createElement('span');num.className='word-num';num.textContent=String(i+1).padStart(2,'0');strong.append(num,document.createTextNode(word.term));const small=document.createElement('small');small.textContent=word.translation||'Перевод не добавлен';main.append(strong,small);main.addEventListener('click',()=>{index=i;flipped=false;render()});
+    const done=document.createElement('button');done.type='button';done.className='check'+(word.learned?' done':'');done.textContent=word.learned?'✓':'○';done.title=word.learned?'Отметить как невыученное':'Отметить «Выучил»';done.setAttribute('aria-label',done.title);done.addEventListener('click',()=>toggleLearned(word.id));
+    const edit=document.createElement('button');edit.type='button';edit.className='edit-small';edit.textContent='✎';edit.title='Редактировать';edit.setAttribute('aria-label','Редактировать '+word.term);edit.addEventListener('click',()=>openEditor(word.id));row.append(main,done,edit);list.appendChild(row);
+  }
+}
+function toggleLearned(id){const c=getCard(id);if(!c)return;c.learned=!c.learned;markDirty();render();setStatus(c.learned?'Отмечено: «Выучил».':'Снова в списке для изучения.');}
+function flip(){if(!currentCard())return;flipped=!flipped;render()}
+function parseStatus(v){return /^(?:1|true|yes|да|ja|выучил|выучено|learned|✓|✔|✅)$/i.test((v||'').trim())}
+function parseLines(text){const rows=[];for(let line of text.replace(/^\uFEFF/,'').split(/\r?\n|\r/g)){
+    line=line.trim();if(!line||/^#/.test(line))continue;
+    line=line.replace(/^\d+[.)]\s+/,'');
+    let parts;if(line.includes('|'))parts=line.split('|');else if(line.includes('\t'))parts=line.split('\t');else if(/\s+[—–-]\s+/.test(line))parts=line.split(/\s+[—–-]\s+/);else if(/\s+=\s+/.test(line))parts=line.split(/\s+=\s+/);else parts=[line];
+    let term=(parts.shift()||'').trim(),translation=(parts.shift()||'').trim(),flag=(parts.shift()||'').trim();
+    if(!term)continue; if(rows.length>=5000)break;
+    rows.push({id:makeId(),term,translation,learned:parseStatus(flag)});
+  }return rows;}
+function parseWords(text){const matches=text.match(/[\p{L}][\p{L}\p{M}'’\-]*/gu)||[];const seen=new Set(),rows=[];for(let m of matches){const key=m.toLocaleLowerCase();if(m.length<2||seen.has(key))continue;seen.add(key);rows.push({id:makeId(),term:m,translation:'',learned:false});if(rows.length>=5000)break;}return rows;}
+async function loadFile(file){if(!file)return;try{
+    const buf=await file.arrayBuffer();let data=new TextDecoder('utf-8').decode(buf);
+    if((data.match(/\uFFFD/g)||[]).length>=2){try{const cp=new TextDecoder('windows-1251').decode(buf);if(!cp.includes('\uFFFD'))data=cp}catch(e){}}
+    const rows=$('importMode').value==='words'?parseWords(data):parseLines(data);
+    if(!rows.length){setStatus('В файле не найдено слов. Проверьте содержимое TXT.');return}
+    if(state.dirty&&!confirm('Загрузка нового TXT заменит текущие карточки. Несохранённые в TXT изменения могут пропасть. Продолжить?'))return;
+    state={cards:rows,fileName:file.name||'Мои слова.txt',dirty:false};persist();resetStudy('Загружено '+rows.length+' карточек из файла «'+state.fileName+'».');
+  }catch(e){setStatus('Не удалось прочитать TXT: '+(e.message||'ошибка'))}finally{$('fileInput').value=''}}
+function saveTxt(){if(!state.cards.length){setStatus('Сначала добавьте или загрузите слова.');return}
+  const lines=['# Флеш-карточки: слово | перевод | выучил (1/0)','# Файл UTF-8. Не изменяйте разделитель |, чтобы статусы можно было восстановить.'];
+  for(const c of state.cards){const clean=v=>String(v||'').replace(/\r?\n/g,' ').replace(/\|/g,'／').trim();lines.push(clean(c.term)+' | '+clean(c.translation)+' | '+(c.learned?'1':'0'))}
+  const blob=new Blob(['\uFEFF'+lines.join('\r\n')+'\r\n'],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  let name=state.fileName.replace(/\.txt$/i,'').replace(/[\\/:*?"<>|]/g,'_').trim();if(!name||name==='Пример (встроенные слова)')name='мои_слова';
+  a.href=url;a.download=name+'_карточки.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+  state.dirty=false;persist();render();setStatus('TXT сохранён. Файл содержит все слова и отметки «Выучил».');
+}
+function openEditor(id){const c=id?getCard(id):null;editingId=c?c.id:null;$('modalTitle').textContent=c?'Редактировать карточку':'Добавить карточку';$('termInput').value=c?c.term:'';$('translationInput').value=c?c.translation:'';$('learnedInput').checked=c?c.learned:false;$('deleteBtn').hidden=!c;$('modalBackdrop').hidden=false;$('termInput').focus()}
+function closeEditor(){$('modalBackdrop').hidden=true;editingId=null}
+$('cardForm').addEventListener('submit',e=>{e.preventDefault();const term=$('termInput').value.trim(),translation=$('translationInput').value.trim(),learned=$('learnedInput').checked;if(!term)return;
+  if(editingId){let c=getCard(editingId);if(c){c.term=term;c.translation=translation;c.learned=learned}}else{state.cards.push({id:makeId(),term,translation,learned})}
+  markDirty();closeEditor();resetStudy('Карточка сохранена.');
+});
+$('deleteBtn').addEventListener('click',()=>{if(!editingId)return;if(!confirm('Удалить эту карточку?'))return;state.cards=state.cards.filter(c=>c.id!==editingId);markDirty();closeEditor();resetStudy('Карточка удалена.')});
+$('cancelBtn').addEventListener('click',closeEditor);$('modalBackdrop').addEventListener('click',e=>{if(e.target===$('modalBackdrop'))closeEditor()});
+$('loadBtn').addEventListener('click',()=>$('fileInput').click());$('fileInput').addEventListener('change',e=>loadFile(e.target.files?.[0]));
+$('saveBtn').addEventListener('click',saveTxt);$('addBtn').addEventListener('click',()=>openEditor(null));
+$('cardFace').addEventListener('click',flip);$('flipBtn').addEventListener('click',flip);
+$('prevBtn').addEventListener('click',()=>changeCard(-1));$('nextBtn').addEventListener('click',()=>changeCard(1));
+$('learnBtn').addEventListener('click',()=>{const c=currentCard();if(c)toggleLearned(c.id)});
+$('editBtn').addEventListener('click',()=>{const c=currentCard();if(c)openEditor(c.id)});
+$('newBatchBtn').addEventListener('click',nextPack);
+$('shuffleBtn').addEventListener('click',()=>{shuffled=true;resetStudy('Слова перемешаны.');});
+$('batchSelect').addEventListener('change',e=>{batchSize=Number(e.target.value);resetStudy()});
+$('filterSelect').addEventListener('change',e=>{filter=e.target.value;resetStudy()});
+$('directionSelect').addEventListener('change',e=>{direction=e.target.value;flipped=false;render()});
+window.addEventListener('keydown',e=>{if(!$('modalBackdrop').hidden){if(e.key==='Escape')closeEditor();return}
+  const t=e.target;if(t&&/INPUT|SELECT|TEXTAREA/.test(t.tagName))return;
+  if(e.key==='ArrowRight'){e.preventDefault();changeCard(1)}else if(e.key==='ArrowLeft'){e.preventDefault();changeCard(-1)}else if(e.key===' '){e.preventDefault();flip()}
+});
+resetStudy('Готово. Сейчас открыты 12 демонстрационных слов. Загрузите свой TXT, чтобы заменить их.');
+})();
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
